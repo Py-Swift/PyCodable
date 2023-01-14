@@ -18,10 +18,14 @@ extension CodingKey {
 
 
 final public class PyDecoder {
-    func decode<T>(_ type: T.Type, from data: PyPointer) throws -> T where T : Decodable {
+    public func decode<T>(_ type: T.Type, from data: PyPointer) throws -> T where T : Decodable {
         //print(type, data)
         let decoder = _PyDecoder(data: data)
         return try T(from: decoder)
+    }
+    
+    public init() {
+        
     }
 }
 

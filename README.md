@@ -23,7 +23,6 @@ person_dict = {
 	"street": "PySwift Lane",
 	"interests": ["coding","chilling","others"]
 }
-
 ```
 
 ```swift
@@ -55,14 +54,70 @@ print(person.street)
 
 for interest in person.interests {
     switch interest {
-      case .coding:
-    	  print("\(person.name) likes to code ")
-      case .chilling:
-    	  print("\(person.name) LOVES to chill ")
-      case .other:
-    	  print("\(person.name) likes other stuff 2 ")
+    case .coding:
+    	print("\(person.name) likes to code ")
+    case .chilling:
+    	print("\(person.name) LOVES to chill ")
+    case .other:
+    	print("\(person.name) likes other stuff 2 ")
     }
 }
 
 ```
+
+### list of "person"
+
+
+```python
+# Python
+peoples_list = [
+    {
+        "name": "Joe",
+        "age": 25,
+        "street": "PySwift Lane 1",
+        "interests": ["coding", "chilling", "others"]
+    },
+    {
+        "name": "Matt",
+        "age": 19,
+        "street": "PySwift Lane 2",
+        "interests": ["chilling", "others"]
+    },
+    {
+        "name": "Sussie",
+        "age": 32,
+        "street": "PySwift Lane 3",
+        "interests": ["others"]
+    }
+]
+```
+
+```swift
+let list_obj: PyPointer = SomePyFunction() // returns the person_dict from python
+let pydecoder = PyDecoder()
+
+let peoples = pydecoder.decode([Person].self, from: dict_obj) 
+// notice that we use [ type ].self now, to tell swift we want an Array of Person
+
+for person in peoples {
+    print(person.name)
+    print(person.age)
+    print(person.street)
+
+    for interest in person.interests {
+        switch interest {
+        case .coding:
+            print("\(person.name) likes to code ")
+        case .chilling:
+            print("\(person.name) LOVES to chill ")
+        case .other:
+            print("\(person.name) likes other stuff 2 ")
+        }
+
+    }
+}
+```
+
+
+
 

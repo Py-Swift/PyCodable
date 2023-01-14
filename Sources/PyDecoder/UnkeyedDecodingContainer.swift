@@ -31,7 +31,7 @@ extension _PyDecoder {
         }
         
         
-        //@inlinable
+        @inlinable
         func next() -> PythonPointer { iter.next() ?? nil }
     }
 }
@@ -68,4 +68,4 @@ extension _PyDecoder.UnkeyedContainer: UnkeyedDecodingContainer {
     }
 }
 
-extension _PyDecoder.UnkeyedContainer: PyDictDecodingContainer {}
+extension _PyDecoder.UnkeyedContainer: PyDecodingContainer {}

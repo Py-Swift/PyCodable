@@ -11,7 +11,9 @@ extension CodingKey {
         self.stringValue.withCString {key in PyDict_GetItemString(data, key)}
     }
     func pyClassItem(data: PyPointer) -> PyPointer {
-        self.stringValue.withCString {key in PyObject_GetAttrString(data, key)}
+        let rtn = self.stringValue.withCString {key in PyObject_GetAttrString(data, key)}
+        defer { Py_DecRef(rtn) }
+        return rtn
     }
 }
 
@@ -19,7 +21,6 @@ extension CodingKey {
 
 final public class PyDecoder {
     public func decode<T>(_ type: T.Type, from data: PyPointer) throws -> T where T : Decodable {
-        //print(type, data)
         let decoder = _PyDecoder(data: data)
         return try T(from: decoder)
     }
@@ -34,11 +35,17 @@ final class _PyDecoder {
     
     var userInfo: [CodingUserInfoKey : Any] = [:]
     
-    var container: PyDictDecodingContainer?
+    var container: PyDecodingContainer?
+
     var data: PyPointer
     
     init(data: PyPointer) {
         self.data = data
+        Py_IncRef(data)
+    }
+    
+    deinit {
+        Py_DecRef(data)
     }
 }
 
@@ -49,10 +56,15 @@ extension _PyDecoder: Decoder {
         
     func container<Key>(keyedBy type: Key.Type) -> KeyedDecodingContainer<Key> where Key : CodingKey {
         //assertCanCreateContainer()
-
-        let container = DictContainer<Key>(data: data, codingPath: self.codingPath, userInfo: self.userInfo)
+        if PythonDict_Check(data) {
+            let container = DictContainer<Key>(data: data, codingPath: self.codingPath, userInfo: self.userInfo)
+            self.container = container
+            
+            return KeyedDecodingContainer(container)
+        }
+        let container = ClassContainer<Key>(data: data, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
-
+        
         return KeyedDecodingContainer(container)
     }
 
@@ -74,6 +86,6 @@ extension _PyDecoder: Decoder {
     }
 }
 
-protocol PyDictDecodingContainer: AnyObject {
+protocol PyDecodingContainer: AnyObject {
     
 }

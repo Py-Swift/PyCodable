@@ -1,86 +1,123 @@
-# DIY Codable Encoder / Decoder Kit
+# PyCodable
 
 In Swift 4,
 a type that conforms to the `Codable` protocol
 can be encoded to or decoded from representations
 for any format that implements a corresponding `Encoder` or `Decoder` type.
 
-At the time of its release,
-the only reference implementations for these types
-were the Foundation framework's `JSONEncoder` / `JSONDecoder`
-and `PropertyListEncoder` and `PropertyListDecoder`.
-The [implementation details](https://github.com/apple/swift/blob/master/stdlib/public/SDK/Foundation/JSONEncoder.swift)
-of these types, however,
-are obfuscated by translation logic from
-`JSONSerialization` and `PropertyListSerialization`.
+PyCodable takes the same implementations as JSONDecoder / JSONEncoder and uses it to extract data from PyClasses / PyDictionaries into Swift Classes and vice versa. 
 
-This repository provides a template
-that makes it easier for developers
-to create encoders and decoders for custom formats.
-The template includes stubbed placeholders for the required types and methods
-as well as simple tests for encoding and decoding `Codable` types.
+[JSONDecoder details](https://github.com/apple/swift/blob/master/stdlib/public/SDK/Foundation/JSONDecoder.swift)
 
-This general structure was used to implement a `Codable`-compatible
-[encoder and decoder for the MessagePack format](https://github.com/flight-school/messagepack).
-
-For more information about the design and implementation
-of custom encoder and decoder types,
-see Chapter 7 of
-[Flight School Guide to Swift Codable](https://flight.school/books/codable).
+[JSONEncoder details](https://github.com/apple/swift/blob/master/stdlib/public/SDK/Foundation/JSONEncoder.swift)
 
 ## Usage
 
-* Clone this repository
-* Find all instances of the "<#Format#>" placeholder
-  and replace with the name of your own format
-* Replace the leading underscores in the
-  `___Decoder.swift` and `___Encoder.swift` files,
-  as well as the source files in the Tests directory
-* Run the command `swift package generate-xcodeproj`
-  in the root project directory
-* Fill in the missing implementation accordingly
-
-### Encoder Structure
-
-```swift
-public class <#Format#>Encoder {
-    public func encode<T>(_ value: T) throws -> Data
-                        where T : Encodable
-}
-
-final class _<#Format#>Encoder: Encoder {
-    final class SingleValueContainer: SingleValueEncodingContainer
-    final class UnkeyedContainer: UnkeyedEncodingContainer
-    final class KeyedContainer<Key>: KeyedEncodingContainerProtocol
-            where Key: CodingKey
-}
-
-protocol <#Format#>EncodingContainer: class {}
-```
-
 ### Decoder Structure
 
-```swift
-public class <#Format#>Decoder {
-    public func decode<T>(_ type: T.Type,
-                          from data: Data) throws -> T
-                        where T : Decodable
+```python
+# Python
+person_dict = {
+	"name": "Joe",
+	"age": 25,
+	"street": "PySwift Lane",
+	"interests": ["coding","chilling","others"]
 }
-
-final class _<#Format#>Decoder: Decoder {
-    final class SingleValueContainer: SingleValueDecodingContainer
-    final class UnkeyedContainer: UnkeyedDecodingContainer
-    final class KeyedContainer<Key>: KeyedContainer
-            where Key: CodingKey
-}
-
-protocol <#Format#>DecodingContainer: class {}
 ```
 
-## License
+```swift
+// Swift
+enum Interest: String, Codable {
+    case coding
+    case chilling
+    case others
+}
 
-MIT
+class Person: Codable {
+    var name: String
+    var age: Int
+    var street: String
+    var interests: [Interest]
+}
 
-## Contact
+// decode person_dict (PyPointer) into Person Class
+let dict_obj: PyPointer = SomePyFunction() // returns the person_dict from python
+let pydecoder = PyDecoder()
+let person = pydecoder.decode(Person.self, from: dict_obj)
 
-Mattt ([@mattt](https://twitter.com/mattt))
+print(person.name)
+// Joe
+print(person.age)
+// 25
+print(person.street)
+// PySwift Lane
+
+for interest in person.interests {
+    switch interest {
+    case .coding:
+    	print("\(person.name) likes to code ")
+    case .chilling:
+    	print("\(person.name) LOVES to chill ")
+    case .other:
+    	print("\(person.name) likes other stuff 2 ")
+    }
+}
+
+```
+
+### list of "person"
+
+
+```python
+# Python
+peoples_list = [
+    {
+        "name": "Joe",
+        "age": 25,
+        "street": "PySwift Lane 1",
+        "interests": ["coding", "chilling", "others"]
+    },
+    {
+        "name": "Matt",
+        "age": 19,
+        "street": "PySwift Lane 2",
+        "interests": ["chilling", "others"]
+    },
+    {
+        "name": "Sussie",
+        "age": 32,
+        "street": "PySwift Lane 3",
+        "interests": ["others"]
+    }
+]
+```
+
+```swift
+let list_obj: PyPointer = SomePyFunction() // returns the person_dict from python
+let pydecoder = PyDecoder()
+
+let peoples = pydecoder.decode([Person].self, from: dict_obj) 
+// notice that we use [ type ].self now, to tell swift we want an Array of Person
+
+for person in peoples {
+    print(person.name)
+    print(person.age)
+    print(person.street)
+
+    for interest in person.interests {
+        switch interest {
+        case .coding:
+            print("\(person.name) likes to code ")
+        case .chilling:
+            print("\(person.name) LOVES to chill ")
+        case .other:
+            print("\(person.name) likes other stuff 2 ")
+        }
+
+    }
+}
+```
+
+
+
+

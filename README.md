@@ -29,17 +29,16 @@ person_dict = {
 ```swift
 // Swift
 enum Interest: String, Codable {
-  case coding
-  case chilling
-  case others
+    case coding
+    case chilling
+    case others
 }
 
 class Person: Codable {
-	var name: String
-	var age: Int
-	var street: String
-  var interests: [Interest]
-  
+    var name: String
+    var age: Int
+    var street: String
+    var interests: [Interest]
 }
 
 // decode person_dict (PyPointer) into Person Class
@@ -55,14 +54,14 @@ print(person.street)
 // PySwift Lane
 
 for interest in person.interests {
-  switch interest {
-    case .coding:
-    	print("\(person.name) likes to code ")
-    case .chilling:
-    	print("\(person.name) LOVES to chill ")
-    case .other:
-    	print("\(person.name) likes other stuff 2 ")
-  }
+    switch interest {
+      case .coding:
+    	  print("\(person.name) likes to code ")
+      case .chilling:
+    	  print("\(person.name) LOVES to chill ")
+      case .other:
+    	  print("\(person.name) likes other stuff 2 ")
+    }
 }
 
 ```

@@ -88,20 +88,11 @@ extension _PyDecoder.ClassContainer: KeyedDecodingContainerProtocol {
     }
     
     func contains(_ key: Key) -> Bool {
-        //print("contains:", key.stringValue)
-        return PyObject_HasAttr(data, key)
+        PyObject_HasAttr(data, key)
     }
     
     func decodeNil(forKey key: Key) throws -> Bool {
-//        print("handling decodeNil")
-        let obj = key.pyClassItem(data: data)
-        defer {
-//            print("decodeNil defered")
-            //Py_DecRef(obj)
-            
-        }
-//        print("handled decodeNil", (obj == PythonNone))
-        return (obj == PythonNone)
+        (key.pyClassItem(data: data) == PythonNone)
     }
     
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {

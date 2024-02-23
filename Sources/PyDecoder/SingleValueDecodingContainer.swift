@@ -1,11 +1,11 @@
 import Foundation
-import PythonLib
-import PythonSwiftCore
+//import PythonLib
+import PySwiftCore
 
 
 
-extension _PyDecoder {
-    final class SingleValueContainer {
+extension PyDecoder {
+    struct SingleValueContainer {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
         var data: PyPointer
@@ -14,109 +14,124 @@ extension _PyDecoder {
             self.codingPath = codingPath
             self.userInfo = userInfo
             self.data = data
-            Py_IncRef(data)
+		
+            //Py_IncRef(data)
         }
         
-        deinit {
-            Py_DecRef(data)
-        }
+//        deinit {
+//            Py_DecRef(data)
+//        }
     }
 }
 
-extension _PyDecoder.SingleValueContainer: SingleValueDecodingContainer {
+extension PyDecoder.SingleValueContainer: SingleValueDecodingContainer {
+	
+	
     func decodeNil() -> Bool {
-        fatalError()
+		Py_IsNone(data) == 1
     }
     
     func decode(_ type: Bool.Type) throws -> Bool {
-        if data == PythonNone { return false }
-        if data == PythonFalse { return false }
+        if data == PyNone { return false }
+        if data == PyFalse { return false }
         return true
     }
     
-    func decode(_ type: String.Type) throws -> String {
-        if PythonUnicode_Check(data) {
-            return .init(cString: PyUnicode_AsUTF8(data))
-        }
-        if let str = PyObject_Str(data) {
-            defer {Py_DecRef(str)}
-            return .init(cString: PyUnicode_AsUTF8(str))
-        }
-        
-        throw PythonError.unicode
-    }
+//	func decode<T: Decodable>(_ type: T.Type) throws -> T where T == String {
+//        if PythonUnicode_Check(data) {
+//            return .init(cString: PyUnicode_AsUTF8(data))
+//        }
+//        if let str = PyObject_Str(data) {
+//            defer {Py_DecRef(str)}
+//            return .init(cString: PyUnicode_AsUTF8(str))
+//        }
+//        
+//        throw PythonError.unicode
+//    }
+	
+	func decode(_ type: String.Type) throws -> String {
+		if PyUnicode_Check(data) {
+			return .init(cString: PyUnicode_AsUTF8(data))
+		}
+		let str = PyObject_Str(data)
+		defer { str?.decref()}
+		return .init(cString: PyUnicode_AsUTF8(str))
+	}
     
     func decode(_ type: Double.Type) throws -> Double {
-        if PythonFloat_Check(data){
+        if PyFloat_Check(data){
             return PyFloat_AsDouble(data)
-        } else if PythonLong_Check(data) {
+        } else if PyLong_Check(data) {
             return PyLong_AsDouble(data)
         }
         else { throw PythonError.float }
     }
     
     func decode(_ type: Float.Type) throws -> Float {
-        if PythonFloat_Check(data){
+        if PyFloat_Check(data){
             return .init(PyFloat_AsDouble(data))
-        } else if PythonLong_Check(data) {
+        } else if PyLong_Check(data) {
             return .init(PyFloat_AsDouble(data))
         }
         else { throw PythonError.float }
     }
     
     func decode(_ type: Int.Type) throws -> Int {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return PyLong_AsLong(data)
     }
 
     func decode(_ type: Int8.Type) throws -> Int8 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsLong(data))
     }
 
     func decode(_ type: Int16.Type) throws -> Int16 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsLong(data))
     }
 
     func decode(_ type: Int32.Type) throws -> Int32 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsLong(data))
     }
 
     func decode(_ type: Int64.Type) throws -> Int64 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return PyLong_AsLongLong(data)
     }
     
     func decode(_ type: UInt.Type) throws -> UInt {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return PyLong_AsUnsignedLong(data)
     }
     
     func decode(_ type: UInt8.Type) throws -> UInt8 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsUnsignedLong(data))
     }
     
     func decode(_ type: UInt16.Type) throws -> UInt16 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsUnsignedLong(data))
     }
     
     func decode(_ type: UInt32.Type) throws -> UInt32 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return .init(clamping: PyLong_AsUnsignedLong(data))
     }
     
     func decode(_ type: UInt64.Type) throws -> UInt64 {
-        guard PythonLong_Check(data) else { throw PythonError.long }
+        guard PyLong_Check(data) else { throw PythonError.long }
         return PyLong_AsUnsignedLongLong(data)
     }
   
     func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
-        fatalError()
+		try PyDecoder().decode(type, from: data)
+		
+		//let decoder = PyDecoder._Decoder(data: data)
+		//return try T.init(from: decoder)
     }
 }
 
-extension _PyDecoder.SingleValueContainer: PyDecodingContainer {}
+extension PyDecoder.SingleValueContainer: PyDecodingContainer {}

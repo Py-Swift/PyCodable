@@ -1,13 +1,14 @@
 import Foundation
-import PythonSwiftCore
+import PySwiftCore
 /**
  
  */
 public class PyEncoder {
     func encode(_ value: Encodable) throws -> PyPointer {
-        let encoder = _PyEncoder()
-        try value.encode(to: encoder)
-        return encoder.data
+//        let encoder = _PyEncoder()
+//        try value.encode(to: encoder)
+//        return encoder.data
+		fatalError()
     }
 }
 
@@ -18,7 +19,7 @@ final class _PyEncoder {
     
     fileprivate var container: PyEncodingContainer?
     
-    var data: PyPointer = nil
+    var data: PyPointer? = nil
     
     init() {
         

@@ -19,7 +19,7 @@ let package = Package(
         //.package(path: "../PythonSwiftLink-development"),
 		.package(
 			url: "https://github.com/PythonSwiftLink/PythonSwiftLink",
-			branch: "master"
+			from: .init(311, 0, 0)
 		)
     ],
     targets: [

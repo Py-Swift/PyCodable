@@ -18,7 +18,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         //.package(path: "../PythonSwiftLink-development"),
 		.package(
-			url: "https://github.com/PythonSwiftLink/PythonSwiftLink",
+			url: "https://github.com/PythonSwiftLink/PySwiftKit",
 			from: .init(311, 0, 0)
 		)
     ],
@@ -28,7 +28,7 @@ let package = Package(
         .target(
             name: "PyCodable",
             dependencies: [
-				.product(name: "PySwiftCore", package: "PythonSwiftLink")
+				.product(name: "PySwiftCore", package: "PySwiftKit")
 			],
             path: "Sources"
         ),

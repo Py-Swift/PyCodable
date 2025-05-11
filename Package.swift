@@ -28,7 +28,7 @@ let package = Package(
         .target(
             name: "PyCodable",
             dependencies: [
-				.product(name: "PySwiftCore", package: "PySwiftKit")
+				.product(name: "PySwiftKit", package: "PySwiftKit")
 			],
             path: "Sources"
         ),

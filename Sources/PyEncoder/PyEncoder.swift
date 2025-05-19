@@ -1,11 +1,15 @@
 import Foundation
-import PySwiftCore
+import PySwiftKit
 import PythonCore
 /**
  
  */
 public class PyEncoder {
-    func encode(_ value: Encodable) throws -> PyPointer {
+    
+    public init() {
+        
+    }
+    public func encode(_ value: Encodable) throws -> PyPointer {
 //        let encoder = _PyEncoder()
 //        try value.encode(to: encoder)
 //        return encoder.data

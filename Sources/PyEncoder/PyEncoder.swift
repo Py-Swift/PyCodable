@@ -4,7 +4,7 @@ import PythonCore
 /**
  
  */
-public class PyEncoder {
+public struct PyEncoder {
     
     public init() {
         
@@ -16,22 +16,28 @@ public class PyEncoder {
 		fatalError()
     }
 }
-
-final class _PyEncoder {
-    var codingPath: [CodingKey] = []
-    
-    var userInfo: [CodingUserInfoKey : Any] = [:]
-    
-    fileprivate var container: PyEncodingContainer?
-    
-    var data: PyPointer? = nil
-    
-    init() {
+extension PyEncoder {
+    final class _Encoder_ {
         
+        typealias KeyedContainer = PyEncoder.KeyedContainer
+        typealias UnkeyedContainer = PyEncoder.UnkeyedContainer
+        typealias SingleValueContainer = PyEncoder.SingleValueContainer
+        
+        
+        var codingPath: [CodingKey] = []
+        
+        var userInfo: [CodingUserInfoKey : Any] = [:]
+        
+        fileprivate var container: PyEncodingContainer?
+        
+        var data: PyPointer? = nil
+        
+        init() {
+            
+        }
     }
 }
-
-extension _PyEncoder: Encoder {
+extension PyEncoder._Encoder_: Encoder {
     fileprivate func assertCanCreateContainer() {
         precondition(self.container == nil)
     }
@@ -39,7 +45,7 @@ extension _PyEncoder: Encoder {
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         assertCanCreateContainer()
         
-        let container = KeyedContainer<Key>(codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = KeyedContainer<Key>(codingPath: self.codingPath, userInfo: self.userInfo, target: PyDict_New()!)
         self.container = container
         
         return KeyedEncodingContainer(container)

@@ -1,18 +1,22 @@
 import Foundation
+import PySwiftKit
 
-extension _PyEncoder {
+
+extension PyEncoder {
     final class KeyedContainer<Key> where Key: CodingKey {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
+        var target: PyPointer
         
-        init(codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+        init(codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any], target: PyPointer) {
             self.codingPath = codingPath
             self.userInfo = userInfo
+            self.target = target
         }
     }
 }
 
-extension _PyEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
+extension PyEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     func encodeNil(forKey key: Key) throws {
         fatalError()
     }
@@ -38,4 +42,4 @@ extension _PyEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     }
 }
 
-extension _PyEncoder.KeyedContainer: PyEncodingContainer {}
+extension PyEncoder.KeyedContainer: PyEncodingContainer {}

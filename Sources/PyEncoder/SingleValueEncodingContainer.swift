@@ -1,6 +1,7 @@
 import Foundation
+import PySwiftKit
 
-extension _PyEncoder {
+extension PyEncoder {
     final class SingleValueContainer {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
@@ -12,7 +13,7 @@ extension _PyEncoder {
     }
 }
 
-extension _PyEncoder.SingleValueContainer: SingleValueEncodingContainer {
+extension PyEncoder.SingleValueContainer: SingleValueEncodingContainer {
     func encodeNil() throws {
         fatalError()
     }
@@ -78,6 +79,6 @@ extension _PyEncoder.SingleValueContainer: SingleValueEncodingContainer {
     }
 }
 
-extension _PyEncoder.SingleValueContainer: PyEncodingContainer {
+extension PyEncoder.SingleValueContainer: PyEncodingContainer {
 
 }

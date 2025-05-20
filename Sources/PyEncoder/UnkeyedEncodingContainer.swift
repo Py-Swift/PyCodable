@@ -1,6 +1,6 @@
 import Foundation
 
-extension _PyEncoder {
+extension PyEncoder {
     final class UnkeyedContainer {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
@@ -12,7 +12,7 @@ extension _PyEncoder {
     }
 }
 
-extension _PyEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
+extension PyEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
     var count: Int {
         0
     }
@@ -38,4 +38,4 @@ extension _PyEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
     }
 }
 
-extension _PyEncoder.UnkeyedContainer: PyEncodingContainer {}
+extension PyEncoder.UnkeyedContainer: PyEncodingContainer {}

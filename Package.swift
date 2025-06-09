@@ -18,7 +18,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         //.package(path: "../PythonSwiftLink-development"),
 		.package(
-			url: "https://github.com/PythonSwiftLink/PySwiftKit",
+			url: "https://github.com/py-swift/PySwiftKit",
 			from: .init(311, 0, 0)
 		)
     ],

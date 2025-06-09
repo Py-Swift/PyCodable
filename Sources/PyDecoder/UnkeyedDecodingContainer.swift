@@ -20,7 +20,7 @@ extension PyDecoder {
             self.codingPath = codingPath
             self.userInfo = userInfo
             self.data = data
-            self.buffer = data.sequence
+            self.buffer = data.pySequence
             self.count = buffer.count
             self.iter = buffer.makeIterator()
 		

@@ -1,7 +1,9 @@
 import Foundation
 //import PythonLib
 import PySwiftKit
+import PySerializing
 import PythonCore
+import PyCollection
 
 fileprivate let py_decoder = PyDecoder()
 
@@ -9,12 +11,19 @@ extension PyDecoder {
     struct DictContainer<Key> where Key: CodingKey {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
+        var allKeys: [Key]
         var data: PyPointer
         
         init(data: PyPointer, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
             self.codingPath = codingPath
             self.userInfo = userInfo
             self.data = data
+            let keys = PyDict_Keys(data)!
+            allKeys = keys.map({ element in
+                guard let element, let key = try? String(object: element) else { fatalError() }
+                return .init(stringValue: key)!
+            })
+            Py_DecRef(keys)
             //Py_IncRef(data) // - PyDict_GetItemString gives a weakRef so we must make it strong
         }
         
@@ -46,11 +55,6 @@ fileprivate func PyDict_GetItem(_ dp: UnsafeMutablePointer<PyObject>!,_ key: Cod
 }
 
 extension PyDecoder.DictContainer: KeyedDecodingContainerProtocol {
-    
-    
-    var allKeys: [Key] {
-        fatalError()
-    }
     
     func contains(_ key: Key) -> Bool {
         //let k = key.stringValue.pyPointer
